@@ -5,7 +5,6 @@
 # Above is for first part of question
 
 # Second question has revised rules
-#
 
 def check_valid(nbr)
 	nbr = nbr.to_s
@@ -37,5 +36,7 @@ end
 puts check_valid(111111)
 puts check_valid(223450)
 puts check_valid(123789)
-
+puts check_valid2(112233)
+puts check_valid2(123444)
+puts check_valid2(111122)
 puts possibilities_within_range(357253, 892942)
