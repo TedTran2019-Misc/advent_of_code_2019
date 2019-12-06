@@ -42,7 +42,7 @@ def parse_code(code)
 			start += 1
 		end
 
-		# 1-3, 7-8 take address as final. 4-6 doesn't
+		# 1-3, 7-8 take address as final always, 4-6 can or cannot.
 		case opcode
 		when 1
 			code[value_arr[2]] = value_arr[0] + value_arr[1]
