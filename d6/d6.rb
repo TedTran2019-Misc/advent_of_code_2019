@@ -1,12 +1,13 @@
 class Node
 	attr_reader :parent, :children, :value
-	attr_accessor :children_count
+	attr_accessor :children_count, :visited
 
 	def initialize(value)
 		@parent = nil
 		@children = []
 		@value = value
 		@children_count = 0 # Set by dfs_set_children_count
+		@visited = false # For counting steps, reset all nodes after use!
 	end
 
 	def parent=(parent_node)
@@ -61,9 +62,22 @@ class Node
 	end
 
 	def count_steps_between(finish_node)
-		return self if self == finish_node
+		return 0 if self == finish_node
+		return nil if self.visited
 
+		@visited = true
+		node = nil
+		@children.each do |child|
+			node = child.count_steps_between(finish_node)
+			if node.nil?
+				next
+			else
+				return node + 1
+			end
+		end
 
+		node = @parent.count_steps_between(finish_node) if @parent
+		node.nil? ? node : node + 1
 	end
 end
 
@@ -102,5 +116,5 @@ end
 
 # p count_all_orbits('input.txt')
 # p count_all_orbits('test.txt')
-p count_orbital_transfer_between('test2.txt', 'YOU', 'SAN')
-
+# p count_orbital_transfer_between('test2.txt', 'YOU', 'SAN')
+ p count_orbital_transfer_between('input.txt', 'YOU', 'SAN')
