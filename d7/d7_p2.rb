@@ -50,6 +50,9 @@ def parse_code(code, amp = false, start = 0)
 		when 2
 			code[value_arr[2]] = value_arr[0] * value_arr[1]
 		when 3
+			if amp && amp.empty?
+				raises 'Need input!'
+			end
 			code[value_arr[0]] = (amp ? amp.shift : gets.chomp.to_i)
 		when 4
 			return_value = value_arr[0]
@@ -68,7 +71,7 @@ def parse_code(code, amp = false, start = 0)
 	end
 
 	# code
-	[return_value, start]
+	return_value
 end
 
 # It took me so long to understand...
@@ -76,6 +79,7 @@ def find_highest_thrust2
 	max = nil
 
 	[5, 6, 7, 8, 9].permutation.each do |permu|
+		keep_looping = true
 		loop_count = 0
 		amp_idx = { 0 => 0,
 							1 => 0,
@@ -84,15 +88,18 @@ def find_highest_thrust2
 							4 => 0 }
 		output = 0
 		arr = []
-		5.times { arr.push(get_input('test2.txt', true)) }
-		while (1)
+		5.times { arr.push(get_input('input.txt', true)) }
+		while (keep_looping)
 			arr.each_with_index do |amp, i|
 				input = (loop_count.zero? ? [permu[i], output] : [output])
 				output_and_idx = parse_code(amp, input, amp_idx[i])
-				p output_and_idx
-				sleep(1)
-				output = output_and_idx[0]
-				amp_idx[i] = output[1]
+				if output_and_idx.nil?
+					keep_looping = false
+					break
+				else
+					output = output_and_idx[0]
+					amp_idx[i] = output_and_idx[1]
+				end
 			end
 			loop_count += 1
 		end
@@ -105,5 +112,5 @@ end
 
 # parse_code(get_input('input.txt', true))
 # parse_code(get_input('test2.txt', true))
-# I give up-- I don't understand the fucking instructions.
-find_highest_thrust2
+p find_highest_thrust2
+
