@@ -6,8 +6,9 @@ def get_input(input, filename = false)
 	end
 end
 
-def parse_code(code, amp = false)
-	start = 0
+def parse_code(code, amp = false, start = 0)
+	return_value = nil
+
 	while (start < code.length)
 		opcode = code[start] % 100
 		command = code[start].to_s
@@ -51,7 +52,7 @@ def parse_code(code, amp = false)
 		when 3
 			code[value_arr[0]] = (amp ? amp.shift : gets.chomp.to_i)
 		when 4
-			puts value_arr[0]
+			return_value = value_arr[0]
 		when 5
 			start = value_arr[1] unless value_arr[0].zero?
 		when 6
@@ -65,7 +66,8 @@ def parse_code(code, amp = false)
 		end
 	end
 
-	code
+	# code
+	return_value
 end
 
 =begin
@@ -92,10 +94,27 @@ parse_code(get_input('3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
 parse_code(get_input('input.txt', true))
 =end
 
+# Part 1
 def find_highest_thrust
 	max = nil
+	max_permu = nil
 
+	[0, 1, 2, 3, 4].permutation.each do |permu|
+		output = 0
+		permu.each do |ele|
+			output = parse_code(get_input('input.txt', true), [ele, output])
+		end
 
+		if (max.nil? || output > max)
+			max = output
+			max_permu = permu
+		end
+	end
+
+	p max_permu
+	p max
 end
 
-parse_code(get_input('input.txt', true))
+find_highest_thrust # [2, 0, 1, 4, 3], 101490
+# parse_code(get_input('input.txt', true))
+# parse_code(get_input('test2.txt', true))
