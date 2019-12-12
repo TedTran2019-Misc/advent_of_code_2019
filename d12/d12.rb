@@ -11,6 +11,7 @@
 
 class JupiterDodger
 	def initialize(input)
+		@input = input
 		# Position, Velocity
 		@moons_pos = {
 			io: [[0, 0, 0], [0, 0, 0]],
@@ -20,6 +21,66 @@ class JupiterDodger
 		}
 		@moons = @moons_pos.keys
 		moon_positions(input)
+	end
+
+	# Hmm, I'm assuming it's in orbit, so one full cycle === back to original position
+	# All the moons are orbiting each other, as well, so they should be cycling
+	# Time to take discrete mathematics and number theory.
+	# Looking at output -- x-axis of moon cycles landing at the same spot.
+	# How long before x-axis of every moon lands at the same spot?
+	# How about y-axis of every moon?
+	# z-axis of every moon?
+	# Don't feel like making a deep dup, will just resend in the input.
+	# Least common multiple
+	def steps_before_repeat_state
+		steps_to_cycle = []
+		3.times do |coor| # Index value for coordinate
+			steps_to_cycle << JupiterDodger.new(@input).cycle_length(coor)
+		end
+
+		steps_to_cycle.inject { |lcm, step| lcm.lcm(step) }
+	end
+
+	def cycle_length(coor)
+		steps = 0
+		orig_pos = @moons_pos.values.map { |value| value[0][coor] }
+		orig_vel = @moons_pos.values.map { |value| value[1][coor] }
+		while (42)
+			apply_gravity_to_velocity
+			apply_velocity_to_position
+			steps += 1
+
+			break if orig_pos[0] == position(:io)[coor] &&
+							 orig_vel[0] == velocity(:io)[coor] &&
+							 orig_pos[1] == position(:europa)[coor] &&
+							 orig_vel[1] == velocity(:europa)[coor] &&
+							 orig_pos[2] == position(:ganymede)[coor] &&
+							 orig_vel[2] == velocity(:ganymede)[coor] &&
+							 orig_pos[3] == position(:callisto)[coor] &&
+							 orig_vel[3] == velocity(:callisto)[coor]
+		end
+		steps
+	end
+
+	# Naive solution(s) won't work here.
+	def steps_before_repeat_state_naive
+		# state = {}
+		steps = 0
+		orig = @moons_pos.to_s
+		zero_vel = [0, 0, 0]
+		starting_time = Time.now
+		p @moons_pos
+		while (42)
+			sleep(1)
+			# state.has_key?(@moons_pos.to_s) ? break : state[@moons_pos.to_s] = true
+
+			apply_gravity_to_velocity
+			apply_velocity_to_position
+			steps += 1
+			p @moons_pos
+			break if velocity(:io) == zero_vel && @moons_pos.to_s == orig
+		end
+		steps
 	end
 
 	def total_energy
@@ -122,5 +183,17 @@ class JupiterDodger
 end
 
 a = JupiterDodger.new('input.txt')
-a.moon_motion(1000)
-p a.total_energy
+=begin
+a = JupiterDodger.new('<x=-1, y=0, z=2>
+<x=2, y=-10, z=-7>
+<x=4, y=-8, z=8>
+<x=3, y=5, z=-1>')
+a = JupiterDodger.new('<x=-8, y=-10, z=0>
+<x=5, y=5, z=10>
+<x=2, y=-7, z=3>
+<x=9, y=-8, z=-3>')
+=end
+# a.moon_motion(1000)
+# p a.total_energy
+# p a.steps_before_repeat_state_naive
+p a.steps_before_repeat_state
