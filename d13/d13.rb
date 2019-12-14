@@ -184,13 +184,13 @@ def play_game(code, grid, player = false)
 	while 42
 		system("clear") && display_grid(grid) if game_start && player
 
-		x, start, relative_base = parse_code(code, start, relative_base, [input])
+		x, start, relative_base = parse_code(code, start, relative_base, input)
 		if x == 'input received'
-			x, start, relative_base = parse_code(code, start, relative_base, [input])
+			x, start, relative_base = parse_code(code, start, relative_base, input)
 		end
 		break if x.nil?
-		y, start, relative_base = parse_code(code, start, relative_base, [input])
-		tile_id, start, relative_base = parse_code(code, start, relative_base, [input])
+		y, start, relative_base = parse_code(code, start, relative_base, input)
+		tile_id, start, relative_base = parse_code(code, start, relative_base, input)
 
 		if x == -1
 			game_start = true
@@ -198,11 +198,12 @@ def play_game(code, grid, player = false)
 		else
 			grid[y][x] = tile_id
 		end
+
 		unless player
 			paddle = find_paddle_x_coor(grid)
 			ball_end = find_ball_x_coor(grid)
 			next if ball_end.nil?
-			input = ball_end <=> paddle
+			input = [ball_end <=> paddle]
 			ball_start = ball_end
 		end
 	end
@@ -227,4 +228,4 @@ def find_paddle_x_coor(grid)
 end
 
 grid = draw_grid(24, code)
-p play_game(code, grid)
+p play_game(code, grid, true)
