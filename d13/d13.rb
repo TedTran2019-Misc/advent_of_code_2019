@@ -96,6 +96,7 @@ def parse_code(code, start, relative_base, input = false)
 			code[value_arr[2]] = value_arr[0] * value_arr[1]
 		when 3
 			code[value_arr[0]] = input ? input.shift : gets.chomp.to_i
+			return ['input received', start, relative_base]
 		when 4
 			# p value_arr[0]
 			return [value_arr[0], start, relative_base]
@@ -131,11 +132,8 @@ def draw_grid(size, code)
 	relative_base = 0
 	grid = Array.new(size) { Array.new(size) }
 	while 42
-		x_pos_start_relative_base = parse_code(code, start, relative_base)
+		x_pos, start, relative_base = parse_code(code, start, relative_base)
 		break if x_pos.nil?
-		x_pos = x_pos_start_relative_base[0] # Dealing with nil case
-		start =  x_pos_start_relative_base[1]
-		relative_base = x_pos_start_relative_base[2]
 		y_pos, start, relative_base = parse_code(code, start, relative_base)
 		tile_id, start, relative_base = parse_code(code, start, relative_base)
 
@@ -146,8 +144,7 @@ def draw_grid(size, code)
 	# 	accu + row.inject(0) { |accu, nbr| nbr == 2 ? accu + 1 : accu }
 	# end
 
-	#grid
-	play_game(code, grid, start, relative_base)
+	grid
 end
 
 require 'colorize'
@@ -172,33 +169,45 @@ def display_grid(grid)
 	print "\n"
 end
 
-def play_game(code, grid, start, relative_base)
+def play_game(code, grid, player = false)
 	code.code[0] = 2
+	start = 0
+	relative_base = 0
 	input = nil
 	ball_start = find_ball_x_coor(grid)
 	ball_end = nil
-	ball_dir = nil
-	p 'bleh'
+	paddle = nil
+	timer = 0
+	score = nil
+	game_start = false
 
 	while 42
-		# system("clear")
-		# display_grid(grid)
-		p start, relative_base
-		x, start, relative_base = parse_code(code, start, relative_base)
+		system("clear") && display_grid(grid) if game_start && player
+
+		x, start, relative_base = parse_code(code, start, relative_base, [input])
+		if x == 'input received'
+			x, start, relative_base = parse_code(code, start, relative_base, [input])
+		end
 		break if x.nil?
-		y, start, relative_base = parse_code(code, start, relative_base)
-		tile_id, start, relative_base = parse_code(code, start, relative_base)
+		y, start, relative_base = parse_code(code, start, relative_base, [input])
+		tile_id, start, relative_base = parse_code(code, start, relative_base, [input])
 
 		if x == -1
-			puts tile_id
+			game_start = true
+			score = tile_id
 		else
 			grid[y][x] = tile_id
 		end
-
-		ball_end = find_ball_x_coor(grid)
-		ball_dir = ball_end
-
+		unless player
+			paddle = find_paddle_x_coor(grid)
+			ball_end = find_ball_x_coor(grid)
+			next if ball_end.nil?
+			input = ball_end <=> paddle
+			ball_start = ball_end
+		end
 	end
+
+	score
 end
 
 def find_ball_x_coor(grid)
@@ -206,6 +215,16 @@ def find_ball_x_coor(grid)
 		x_coor = row.index(4)
 		return x_coor if x_coor
 	end
+	nil
 end
 
-draw_grid(24, code)
+def find_paddle_x_coor(grid)
+	grid.each do |row|
+		x_coor = row.index(3)
+		return x_coor if x_coor
+	end
+	nil
+end
+
+grid = draw_grid(24, code)
+p play_game(code, grid)
