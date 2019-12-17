@@ -12,6 +12,8 @@ def minimum_ore_for_reaction(dicts, goal)
 		ore_required += goal_number
 		ore_dict[goal_name] += goal_number
 	else
+		# This is the hard part for the adjustment-- how do you deal with leftovers?
+		# Minimum guess needed to obtain necessary materials?
 		num_created = reaction_dict[goal_name][0]
 		reaction_dict[goal_name][1..-1].each do |requirement|
 			input_nbr = requirement[0]
@@ -103,4 +105,4 @@ d = create_ore_and_reaction_dicts('171 ORE => 8 CNZTR
 7 XCVML => 6 RJRHP
 5 BHXH, 4 VRPVC => 5 LTCX')
 
-p minimum_ore_for_reaction(a, [500, 'FUEL'])
+p minimum_ore_for_reaction(b, [50000, 'FUEL'])
