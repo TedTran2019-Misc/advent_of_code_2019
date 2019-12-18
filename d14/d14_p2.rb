@@ -1,5 +1,3 @@
-# Goes down to deepest level with 1 trillion ore
-# Binary search with differing amounts of ores
 def minimum_ore_for_reaction(dicts, goal)
 	ore_dict, reaction_dict = dicts
 	ore_required = 0
@@ -8,22 +6,25 @@ def minimum_ore_for_reaction(dicts, goal)
 
 	return 0 if ore_dict[goal_name] >= goal_number
 
+	unless goal_name == 'ORE'
+		num_created = reaction_dict[goal_name][0]
+		requirements = reaction_dict[goal_name][1..-1]
+		mult = ((goal_number - ore_dict[goal_name]) / num_created.to_f).ceil
+	end
+
 	if goal_name == 'ORE'
 		ore_required += goal_number
 		ore_dict[goal_name] += goal_number
 	else
-		# This is the hard part for the adjustment-- how do you deal with leftovers?
-		# Minimum guess needed to obtain necessary materials?
-		num_created = reaction_dict[goal_name][0]
-		reaction_dict[goal_name][1..-1].each do |requirement|
-			input_nbr = requirement[0]
+		requirements.each do |requirement|
+			input_nbr = requirement[0] * mult
 			input_name = requirement[1]
 			until ore_dict[input_name] >= input_nbr
-				ore_required += minimum_ore_for_reaction(dicts, requirement)
+				ore_required += minimum_ore_for_reaction(dicts, [input_nbr, input_name])
 			end
 			ore_dict[input_name] -= input_nbr
 		end
-		ore_dict[goal_name] += num_created
+		ore_dict[goal_name] += (num_created * mult)
 	end
 
 	until ore_dict[goal_name] >= goal_number
@@ -66,7 +67,21 @@ def create_ore_and_reaction_dicts(input, file = false)
 end
 
 a = create_ore_and_reaction_dicts('input.txt', true)
-b = create_ore_and_reaction_dicts('157 ORE => 5 NZVS
+b = create_ore_and_reaction_dicts('10 ORE => 10 A
+1 ORE => 1 B
+7 A, 1 B => 1 C
+7 A, 1 C => 1 D
+7 A, 1 D => 1 E
+7 A, 1 E => 1 FUEL')
+c = create_ore_and_reaction_dicts('9 ORE => 2 A
+8 ORE => 3 B
+7 ORE => 5 C
+3 A, 4 B => 1 AB
+5 B, 7 C => 1 BC
+4 C, 1 A => 1 CA
+2 AB, 3 BC, 4 CA => 1 FUEL'
+)
+d = create_ore_and_reaction_dicts('157 ORE => 5 NZVS
 165 ORE => 6 DCFZ
 44 XJWVT, 5 KHKGT, 1 QDVJ, 29 NZVS, 9 GPVTF, 48 HKGWZ => 1 FUEL
 12 HKGWZ, 1 GPVTF, 8 PSHF => 9 QDVJ
@@ -75,7 +90,7 @@ b = create_ore_and_reaction_dicts('157 ORE => 5 NZVS
 7 DCFZ, 7 PSHF => 2 XJWVT
 165 ORE => 2 GPVTF
 3 DCFZ, 7 NZVS, 5 HKGWZ, 10 PSHF => 8 KHKGT')
-c = create_ore_and_reaction_dicts('2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG
+e = create_ore_and_reaction_dicts('2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG
 17 NVRVD, 3 JNWZP => 8 VPVL
 53 STKFG, 6 MNCFX, 46 VJHF, 81 HVMC, 68 CXFTF, 25 GNMV => 1 FUEL
 22 VJHF, 37 MNCFX => 5 FWMGM
@@ -87,7 +102,7 @@ c = create_ore_and_reaction_dicts('2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG
 1 NVRVD => 8 CXFTF
 1 VJHF, 6 MNCFX => 4 RFSQX
 176 ORE => 6 VJHF')
-d = create_ore_and_reaction_dicts('171 ORE => 8 CNZTR
+f = create_ore_and_reaction_dicts('171 ORE => 8 CNZTR
 7 ZLQW, 3 BMBT, 9 XCVML, 26 XMNCP, 1 WPTQ, 2 MZWV, 1 RJRHP => 4 PLWSL
 114 ORE => 4 BHXH
 14 VRPVC => 6 BMBT
@@ -105,4 +120,17 @@ d = create_ore_and_reaction_dicts('171 ORE => 8 CNZTR
 7 XCVML => 6 RJRHP
 5 BHXH, 4 VRPVC => 5 LTCX')
 
-p minimum_ore_for_reaction(b, [50000, 'FUEL'])
+# minimum_ore_for_reaction(a,	[1, 'FUEL'])
+
+def maximum_fuel_with_ore(ore_used)
+	a = create_ore_and_reaction_dicts('input.txt', true)
+	min_fuel_made = minimum_ore_for_reaction(a, [1, 'FUEL'])
+	start = ore_used / min_fuel_made
+	fuel_created = (start..ore_used).bsearch do |fuel|
+		a = create_ore_and_reaction_dicts('input.txt', true)
+		minimum_ore_for_reaction(a, [fuel, 'FUEL']) > ore_used
+	end
+	fuel_created - 1
+end
+
+p maximum_fuel_with_ore(1000000000000) # 1000000000000 ore used
