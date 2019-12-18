@@ -8,3 +8,9 @@ Lost on day 14 part 2, ended up looking at vinc's solution https://github.com/vi
    - All that needed to be understood on this problem is what needs to happen logically on each recursive step. 
 
 I'm still going to participate, but focus more on refactoring my old code using Rubocop and looking at more experienced developers' solutions as guidance/inspiration upon completing a problem. 
+
+Difficult moments so far:
+1. The moons along every axis, not just individual moons
+2. Intcode computer keeps state
+3. Edgecase for intcode computer dealing with literal mode cases and relative base 
+4. Dealing with calculating large amounts of fuel rather than just 1
