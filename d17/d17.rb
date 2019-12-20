@@ -3,12 +3,15 @@ require_relative 'lib/intcode'
 # ASCII code: [35 == #] [46 == .] [10 = \n]
 # Robot visible as < ^ > v
 # When drawn as dir, always on scaffold. If X, tumbling through space.
-# Forms a path but also loops back onto self
-# Alignment parameter of scaffold intersections: x_idx - x_start * y_idx - y_start
-# Find sum of alignment parameters
-# What is an intersection? -> scaffolds in all 4 dirs
 
 class ASCII
+	DIRS = [
+		[-1, 0],
+		[1, 0],
+		[0, -1],
+		[0, 1]
+	]
+
 	def initialize(program)
 		@program = program
 		@grid = create_grid
@@ -18,7 +21,28 @@ class ASCII
 		@grid.each { |row| puts row }
 	end
 
+	def sum_of_alignment_parameters
+		sum = 0
+		@grid.each_with_index do |row, y|
+			row.each_char.with_index do |ele, x|
+				sum += (x * y) if ele == "#" && is_intersection?(x, y)
+			end
+		end
+		sum
+	end
+
 	private
+
+	def is_intersection?(x, y)
+		DIRS.all? do |dir|
+			dy, dx = dir
+			!out_of_bounds(x + dx, y + dy) && @grid[y + dy][x + dx] == '#'
+		end
+	end
+
+	def out_of_bounds(x, y)
+		x < 0 || y < 0 || y >= @grid.length || x >= @grid[0].length
+	end
 
 	def create_grid
 		grid = []
@@ -39,6 +63,7 @@ class ASCII
 	end
 end
 
-a = Intcode.new('input.txt', true)
-b = ASCII.new(a)
+p1 = Intcode.new('input.txt', true)
+b = ASCII.new(p1)
 b.display_grid
+p b.sum_of_alignment_parameters
