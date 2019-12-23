@@ -10,14 +10,21 @@ class ASCII
 
 	DIRS = [
 		[-1, 0],
+		[0, 1]
 		[1, 0],
 		[0, -1],
-		[0, 1]
 	]
 
 	def initialize(program)
 		@program = program
 		@grid = create_grid
+		@scaffold_nbr = 0
+		@solutions = []
+	end
+
+	# Left, right, keep dir
+	def traverse_maze
+		puts @scaffold_nbr
 	end
 
 	def display_grid
@@ -33,9 +40,12 @@ class ASCII
 		sum = 0
 		@grid.each_with_index do |row, y|
 			row.each_with_index do |ele, x|
-				if ele.type == "#" && is_intersection?(x, y)
-					sum += (x * y)
-					@grid[y][x].is_intersection
+				if ele.type == "#"
+					@scaffold_nbr += 1
+					if is_intersection?(x, y)
+						sum += (x * y)
+						@grid[y][x].is_intersection
+					end
 				end
 			end
 		end
@@ -43,6 +53,14 @@ class ASCII
 	end
 
 	private
+
+	def right
+
+	end
+
+	def left
+
+	end
 
 	def is_intersection?(x, y)
 		DIRS.all? do |dir|
@@ -78,6 +96,7 @@ p1 = Intcode.new('input.txt', true)
 b = ASCII.new(p1)
 b.display_grid
 p b.sum_of_alignment_parameters
+b.traverse_maze
 
 # For part 2, finding the shortest path to cover all of scaffold doesn't matter
 # Need to just fit within limit of 20 chars for main routine and movement funcs
@@ -87,3 +106,5 @@ p b.sum_of_alignment_parameters
 # Upon reaching an intersection, decide course of action
 # Choose that can fit within limits: (3), within 20 chars for movement funcs
 # 20 for main routine
+# Recursive, get all possible solutions utilizing rules. Need to turn or intersection
+# Once you have a solution compress it
