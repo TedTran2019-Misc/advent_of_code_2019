@@ -45,12 +45,15 @@ class ASCII
 			row.each_with_index do |tile, x|
 				if current && current == [y, x]
 					print tile.type.colorize(:red)
+				elsif tile.visited?
+					print tile.type.colorize(:green)
 				else
 					print tile
 				end
 			end
 			print "\n"
 		end
+		print "\n"
 	end
 
 	def sum_of_alignment_parameters
@@ -92,29 +95,28 @@ class ASCII
 	def walk_scaffold(dir, x, y, steps, solution)
 		return if out_of_bounds?(x, y) ||
 							@grid[y][x].type != '#' ||
-							(@grid[y][x].visited? && !@grid[y][x].intersection?)
+							(@grid[y][x].visited? && !@grid[y][x].intersection?) ||
+							@solutions.length > 0 # Only finding one solution
 
 		current = @grid[y][x]
-		current.mark_visited unless current.visited?
+		current.mark_visited
 		solution << steps
-		k = nbr_visited
 		# display_grid([y, x])
-		# p k
-		# sleep (0.2)
-		if k == @scaffold_nbr
+		# sleep (0.05)
+		# system('clear')
+		if nbr_visited == @scaffold_nbr
 			@solutions << compress_solution(solution)
-			return
-		end
-
-		[dir, right(dir), left(dir)].each_with_index do |new_dir, i|
-			dy, dx = DIRS[new_dir]
-			if i == 0
-				walk_scaffold(dir, x + dx, y + dy, steps + 1, solution)
-			else
-				turn = (i == 1 ? 'R' : 'L')
-				solution << turn
-				walk_scaffold(new_dir, x + dx, y + dy, 1, solution)
-				solution.pop
+		else
+			[dir, right(dir), left(dir)].each_with_index do |new_dir, i|
+				dy, dx = DIRS[new_dir]
+				if i == 0
+					walk_scaffold(dir, x + dx, y + dy, steps + 1, solution)
+				else
+					turn = (i == 1 ? 'R' : 'L')
+					solution << turn
+					walk_scaffold(new_dir, x + dx, y + dy, 1, solution)
+					solution.pop
+				end
 			end
 		end
 
@@ -174,15 +176,7 @@ b = ASCII.new(p1)
 b.display_grid
 p b.sum_of_alignment_parameters
 b.traverse
-p b.solutions.length
+p b.solutions[0]
 
-# For part 2, finding the shortest path to cover all of scaffold doesn't matter
-# Need to just fit within limit of 20 chars for main routine and movement funcs
-# How to determine if I should go back upon a path or not? -> Intersection
-# If intersection, can go back upon. If next one after intersection is already
-# visited, return
-# Upon reaching an intersection, decide course of action
-# Choose that can fit within limits: (3), within 20 chars for movement funcs
-# 20 for main routine
-# Recursive, get all possible solutions utilizing rules. Need to turn or intersection
-# Once you have a solution compress it
+# Instructions * 2 since commas have to be included
+

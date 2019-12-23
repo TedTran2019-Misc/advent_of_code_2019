@@ -1,10 +1,11 @@
 class Tile
-	attr_accessor :type, :intersection
+	attr_accessor :type, :intersection, :nbr_visits
 
 	def initialize(type)
 		@type = type
 		@visited = false
 		@intersection = false
+		@nbr_visits = 0
 	end
 
 	def visited?
@@ -13,10 +14,12 @@ class Tile
 
 	def mark_visited
 		@visited = true
+		@nbr_visits += 1
 	end
 
 	def mark_unvisited
 		@visited = false
+		@nbr_visits -= 1
 	end
 
 	def to_s
