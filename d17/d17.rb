@@ -72,6 +72,24 @@ class ASCII
 		sum
 	end
 
+	# Results: A,B,B,A,C,A,C,A,C,B
+	# A: L6,R12,R8
+	# B: R8,R12,L12
+	# C: R12,L12,L4,L4
+	# Did by hand!
+	def visit_scaffold
+		@program.code[0] = 2
+		main_routine = "A,B,B,A,C,A,C,A,C,B\n".split('').map(&:ord)
+		func_a = "L,6,R,12,R,8\n".split('').map(&:ord)
+		func_b = "R,8,R,12,L,12\n".split('').map(&:ord)
+		func_c = "R,12,L,12,L,4,L,4\n".split('').map(&:ord)
+		continuous_video_feed = "n\n".split('').map(&:ord)
+		input = main_routine + func_a + func_b + func_c + continuous_video_feed
+		# Well alright, my intcode machine is boned and I have no idea what to do.
+		p @program
+		p input
+	end
+
 	private
 
 	def compress_solutions
@@ -177,6 +195,7 @@ b.display_grid
 p b.sum_of_alignment_parameters
 b.traverse
 p b.solutions[0]
+p b.visit_scaffold
 
 # Instructions * 2 since commas have to be included
 
