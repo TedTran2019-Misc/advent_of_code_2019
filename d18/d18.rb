@@ -3,7 +3,6 @@
 # Open passages: '.', Walls: '#'
 # Doors are uppercase letters, need keys, corresponding lowercase letters
 # Need to collect all keys in fewest steps possible
-# Can do BFS, DFS wouldn't work since you'd have to backtrack visited tiles
 # How to store which keys you have and which doors can be accessed?
 # Each node stores the amount of keys it has at that point in time
 # Parent node gives children nodes a dup of key dict
@@ -43,13 +42,15 @@ class TritonBeam
 	end
 
 	# Basic BFS
+	# Issue: backtracking and inefficient solutions padding the runtime.
+	# I guess an individual grid for each node, with visited marked! Visited tiles
+	# are unmarked whenever a key is found, excluding the node one is currently on.
+	# I wonder if DFS would have been better here.
 	def shortest_path_to_collect_all_keys
 		y, x = @starting_coor
 		queue = [Node.new({}, x, y)]
 		steps = 0
 		until queue.empty?
-			p queue
-			sleep(3)
 			new_queue = []
 			queue.each do |node|
 				children = generate_children(node)
@@ -70,13 +71,9 @@ class TritonBeam
 		return [] if out_of_bounds?(node)
 		tile = @maze[node.y][node.x]
 		return [] if tile == '#' ||
-								 (!@doors[tile].nil? && node.keys[tile.lowercase].nil?)
+								 (!@doors[tile].nil? && node.keys[tile.downcase].nil?)
 		node.keys[tile] = true if @keys[tile]
 		return nil if node.keys.length == @nbr_keys
-
-		@current = [node.y, node.x]
-		display_maze
-		sleep(3)
 
 		children = []
 		DIRS.each do |dy, dx|
@@ -131,5 +128,13 @@ class Node
 end
 
 a = File.read('input.txt').chomp
+a = '#########
+#b.A.@.a#
+#########'
+a = '########################
+#f.D.E.e.C.b.A.@.a.B.c.#
+######################.#
+#d.....................#
+########################'
 b = TritonBeam.new(a)
-b.shortest_path_to_collect_all_keys
+p b.shortest_path_to_collect_all_keys
