@@ -87,7 +87,7 @@ class Intcode
 			@code[value_arr[2]] = value_arr[0] * value_arr[1]
 		when 3
 			@code[value_arr[0]] = input ? input.shift : gets.chomp.to_i
-			# return 'input received' if @return_mode
+			return 'input received' if @return_mode
 		when 4
 			return value_arr[0] if @return_mode
 			p value_arr[0]

@@ -18,7 +18,7 @@ class ASCII
 
 	def initialize(program)
 		@program = program
-		@grid = create_grid
+		@grid = nil
 		@scaffold_nbr = 1 # Accounting for robot on scaffold
 		@solutions = []
 	end
@@ -83,11 +83,10 @@ class ASCII
 		func_a = "L,6,R,12,R,8\n".split('').map(&:ord)
 		func_b = "R,8,R,12,L,12\n".split('').map(&:ord)
 		func_c = "R,12,L,12,L,4,L,4\n".split('').map(&:ord)
-		continuous_video_feed = "n\n".split('').map(&:ord)
+		continuous_video_feed = "y\n".split('').map(&:ord)
 		input = main_routine + func_a + func_b + func_c + continuous_video_feed
-		# Well alright, my intcode machine is boned and I have no idea what to do.
-		p @program
-		p input
+
+		@grid = create_grid(input) # Got 742673, nice.
 	end
 
 	private
@@ -170,11 +169,12 @@ class ASCII
 		x < 0 || y < 0 || y >= @grid.length || x >= @grid[0].length
 	end
 
-	def create_grid
+	def create_grid(input = nil)
 		grid = []
 		row = []
 		while 42
-			output = @program.run_code
+			output = @program.run_code(input)
+			p output
 			break if output.nil?
 
 			output = output.chr
@@ -191,10 +191,10 @@ end
 
 p1 = Intcode.new('input.txt', true)
 b = ASCII.new(p1)
-b.display_grid
-p b.sum_of_alignment_parameters
-b.traverse
-p b.solutions[0]
+# b.display_grid
+# p b.sum_of_alignment_parameters
+# b.traverse
+# p b.solutions[0]
 p b.visit_scaffold
 
 # Instructions * 2 since commas have to be included
