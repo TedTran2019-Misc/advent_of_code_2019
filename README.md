@@ -14,5 +14,6 @@ Difficult moments so far:
 2. Intcode computer keeps state
 3. Edgecase for intcode computer dealing with literal mode cases and relative base 
 4. Dealing with calculating large amounts of fuel rather than just 1
+5. Thought my Intcode computer was broken and gave up because I didn't want to refactor it-- it was fine. 
 
-My issue on day 17 was that I didn't understand how the problem worked. Even after getting the solution and compressing it, I didn't know what to do. In the end, I just ran the solution input in my grid creator and after outputting all the various positions of where the robot went as a grid, it outputted the answer and crashed. (Since 742673 is out of chr's range).
+My issue on day 17 was that I didn't understand how the problem worked. Even after getting the solution and compressing it, I didn't know what to do. In the end, I just ran the solution input in my grid creator and after outputting all the various positions of where the robot went as a grid, it outputted the answer and crashed. (Since 742673 is out of chr's range). Eh, next time, break when output is nil so you can see what came before the nil...
