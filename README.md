@@ -15,4 +15,4 @@ Difficult moments so far:
 3. Edgecase for intcode computer dealing with literal mode cases and relative base 
 4. Dealing with calculating large amounts of fuel rather than just 1
 
-Truly lost on day 17 part 2. Found the solution and compressed it, but there seems to be an error with my Intcode parser and I can't be assed to fix it. So I can't actually input the solution into my parser... RIP, that was a fun journey, but far too time consuming and I need to actually study. This was a pretty good use of my spare vacation time, though!
+My issue on day 17 was that I didn't understand how the problem worked. Even after getting the solution and compressing it, I didn't know what to do. In the end, I just ran the solution input in my grid creator and after outputting all the various positions of where the robot went as a grid, it outputted the answer and crashed. (Since 742673 is out of chr's range).
