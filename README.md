@@ -17,3 +17,5 @@ Difficult moments so far:
 5. Thought my Intcode computer was broken and gave up because I didn't want to refactor it-- it was fine. 
 
 My issue on day 17 was that I didn't understand how the problem worked. Even after getting the solution and compressing it, I didn't know what to do. In the end, I just ran the solution input in my grid creator and after outputting all the various positions of where the robot went as a grid, it outputted the answer and crashed. (Since 742673 is out of chr's range). Eh, next time, break when output is nil so you can see what came before the nil...
+
+Day 18: Before getting to day 18, I read people's comments about it and it kind of ruined the problem for me. Like an idiot, I decided to just go with bruteforce BFS since I recall reading people saying 'BFS', and didn't really think about the problem myself at all. On the bright side, I realized implementing a bitfield in Ruby is like a class that's 8 lines of code. Anyhow, going to actually think about the problem now. Having barely any time to work on these problems is making it pretty difficult to complete, though. Studies first, AoC after for fun. 
